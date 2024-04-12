@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Data</h1>
+    <form id="student-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="marks">Marks:</label>
+        <input type="number" id="marks" name="marks" min="0" max="100" required>
+        <button type="button" onclick="addStudent()">Add Student</button>
+    </form>
+
+    <table id="student-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Marks</th>
+                <th>Percentage</th>
+                <th>Rank</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Student data will be inserted here -->
+        </tbody>
+    </table>
+
+    <div class="result">
+        <strong>Class Average:</strong> <span id="class-average">-</span>
+    </div>
+
+    <script>
+        let students = [];
+
+        function addStudent() {
+            const name = document.getElementById('name').value;
+            const marks = parseFloat(document.getElementById('marks').value);
+
+            if (name.trim() === '' || isNaN(marks)) {
+                alert('Please enter valid data.');
+                return;
+            }
+
+            students.push({ name, marks });
+            renderStudents();
+        }
+
+        function renderStudents() {
+            const tableBody = document.querySelector('#student-table tbody');
+            tableBody.innerHTML = '';
+
+            students.forEach((student, index) => {
+                const percentage = (student.marks / 100) * 100;
+                const rank = calculateRank(student.marks);
+
+                const row = `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.marks}</td>
+                        <td>${percentage.toFixed(2)}%</td>
+                        <td>${rank}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+
+            updateClassAverage();
+        }
+
+        function calculateRank(marks) {
+            let rank = 1;
+            students.forEach(student => {
+                if (student.marks > marks) {
+                    rank++;
+                }
+            });
+            return rank;
+        }
+
+        function updateClassAverage() {
+            const classAverageElement = document.getElementById('class-average');
+            const totalMarks = students.reduce((total, student) => total + student.marks, 0);
+            const average = totalMarks / students.length;
+            classAverageElement.textContent = average.toFixed(2);
+        }
+    </script>
+</body>
+</html>
